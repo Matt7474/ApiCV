@@ -1,0 +1,4 @@
+BASE_URL=http://localhost
+PORT=3003
+PG_URL=postgres://tennis:tennis@localhost/tennis
+JWT_SECRET=supersecretkey
