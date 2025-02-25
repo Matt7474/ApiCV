@@ -26,7 +26,7 @@ Project.init(
 			allowNull: true,
 		},
 		techno: {
-			type: DataTypes.TEXT,
+			type: DataTypes.JSON,
 			allowNull: false,
 		},
 	},
