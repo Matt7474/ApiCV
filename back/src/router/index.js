@@ -21,7 +21,7 @@ router.get("/projects", catchErrors(projectControllers.index));
 router.get("/projects/:slug", catchErrors(projectControllers.show));
 router.post("/projects", catchErrors(projectControllers.store));
 router.patch("/projects/:slug", catchErrors(projectControllers.update));
-router.delete("/projects", catchErrors(projectControllers.destroy));
+router.delete("/projects/:slug", catchErrors(projectControllers.destroy));
 
 // // Route pour récupérer un membre spécifique
 // /**

@@ -18,8 +18,9 @@ Project.init(
 			allowNull: true,
 		},
 		slug: {
-			type: DataTypes.TEXT,
+			type: DataTypes.STRING,
 			allowNull: false,
+			unique: true,
 		},
 		github: {
 			type: DataTypes.TEXT,

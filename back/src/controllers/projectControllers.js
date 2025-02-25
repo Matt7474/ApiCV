@@ -63,45 +63,57 @@ const projectControllers = {
 
 	async update(req, res) {
 		try {
-			const { image, title, slug, github, description, techno } = req.body;
+			const { oldSlug, image, title, slug, github, description, techno } =
+				req.body;
 
-			const updateProject = await Project.update({
+			// Vérifie si le projet existe avec l'ancien slug
+			const project = await Project.findOne({ where: { slug: oldSlug } });
+
+			if (!project) {
+				return res.status(404).json({ message: "Projet non trouvé" });
+			}
+
+			// Met à jour le projet avec les nouvelles données
+			await project.update({
 				image,
 				title,
-				slug,
+				slug, // Mettre à jour le slug
 				github,
 				description,
 				techno,
 			});
 
-			if (!updateProject) {
-				return res.status(404).json({ message: "Projet non trouvé" });
-			}
-
-			const project = updateProject.toJSON();
-			console.log(project);
 			res.status(200).json(project);
 		} catch (error) {
-			console.error("Erreur lors de la connexion :", error);
+			console.error("Erreur lors de la mise à jour :", error);
 			res.status(500).json({ message: "Erreur serveur" });
 		}
 	},
 
 	async destroy(req, res) {
 		try {
-			const { slug } = req.body;
+			const { slug } = req.params;
 
-			const project = await Project.findOne({ slug });
+			console.log("Slug reçu :", slug);
+
+			// Vérifie si le slug est bien fourni
+			if (!slug) {
+				return res.status(400).json({ message: "Slug manquant" });
+			}
+
+			// Recherche du projet avec la bonne clause WHERE
+			const project = await Project.findOne({ where: { slug } });
 
 			if (!project) {
 				return res.status(404).json({ message: "Projet non trouvé" });
 			}
 
+			// Suppression du projet
 			await project.destroy();
 
-			res.status(200).json(project);
+			res.status(200).json({ message: "Projet supprimé avec succès", project });
 		} catch (error) {
-			console.error("Erreur lors de la connexion :", error);
+			console.error("Erreur lors de la suppression :", error);
 			res.status(500).json({ message: "Erreur serveur" });
 		}
 	},
