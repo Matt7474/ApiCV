@@ -37,8 +37,21 @@ const projectControllers = {
 
 	async store(req, res) {
 		try {
-			const { image, title, slug, github, description, techno } = req.body;
-
+			// Définir une image par défaut
+			let image = "/uploads/default-image.jpg";
+	
+			// Vérifie si un fichier a bien été téléchargé
+			if (req.file) {
+				image = `/uploads/${req.file.filename}`;
+			}
+	
+			// Vérifie la présence des champs nécessaires
+			const { title, slug, github, description, techno } = req.body;
+			if (!title || !slug || !github || !description || !techno) {
+				return res.status(400).json({ message: "Tous les champs doivent être remplis" });
+			}
+	
+			// Crée le nouveau projet
 			const newProject = await Project.create({
 				image,
 				title,
@@ -47,19 +60,22 @@ const projectControllers = {
 				description,
 				techno,
 			});
-
+	
 			if (!newProject) {
-				return res.status(404).json({ message: "Projet non trouvé" });
+				return res.status(404).json({ message: "Erreur lors de la création du projet" });
 			}
-
-			const project = newProject.toJSON();
-			console.log(project);
-			res.status(200).json(project);
+	
+			// Retourne le projet créé
+			console.log(newProject); // Vérifie si le projet est bien créé
+			res.status(201).json(newProject); // Retourne directement `newProject`
 		} catch (error) {
-			console.error("Erreur lors de la connexion :", error);
+			console.error("Erreur lors de la création du projet :", error);
 			res.status(500).json({ message: "Erreur serveur" });
 		}
 	},
+	
+	  
+	  
 
 	async update(req, res) {
 		try {

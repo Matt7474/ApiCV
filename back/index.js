@@ -24,6 +24,7 @@ app.use(
 );
 
 app.use(express.static(import.meta.dirname));
+app.use("/uploads", express.static("uploads"));
 
 app.use(express.urlencoded({ extended: false }));
 
