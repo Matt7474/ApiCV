@@ -36,51 +36,90 @@ const projectControllers = {
 	},
 
 	async store(req, res) {
+		console.log("requete effectué");
+
 		try {
-			// Définir une image par défaut
 			let image = "/uploads/default-image.jpg";
-	
-			// Vérifie si un fichier a bien été téléchargé
+
 			if (req.file) {
 				image = `/uploads/${req.file.filename}`;
 			}
-	
+
 			// Vérifie la présence des champs nécessaires
-			const { title, slug, github, description, techno } = req.body;
-			if (!title || !slug || !github || !description || !techno) {
-				return res.status(400).json({ message: "Tous les champs doivent être remplis" });
+			const {
+				title,
+				slug,
+				github,
+				description,
+				date,
+				conception,
+				front,
+				back,
+				fullstack,
+				bdd,
+			} = req.body;
+
+			if (
+				!title ||
+				!slug ||
+				!github ||
+				!description ||
+				!date ||
+				!conception ||
+				!front ||
+				!back ||
+				!fullstack ||
+				!bdd
+			) {
+				return res
+					.status(400)
+					.json({ message: "Tous les champs doivent être remplis" });
 			}
-	
-			// Crée le nouveau projet
+
 			const newProject = await Project.create({
 				image,
 				title,
 				slug,
 				github,
 				description,
-				techno,
+				date,
+				conception: JSON.parse(conception),
+				front: JSON.parse(front),
+				back: JSON.parse(back),
+				fullstack: JSON.parse(fullstack),
+				bdd: JSON.parse(bdd),
 			});
-	
+
 			if (!newProject) {
-				return res.status(404).json({ message: "Erreur lors de la création du projet" });
+				return res
+					.status(404)
+					.json({ message: "Erreur lors de la création du projet" });
 			}
-	
-			// Retourne le projet créé
-			console.log(newProject); // Vérifie si le projet est bien créé
-			res.status(201).json(newProject); // Retourne directement `newProject`
+
+			console.log(newProject);
+			res.status(201).json(newProject);
 		} catch (error) {
 			console.error("Erreur lors de la création du projet :", error);
 			res.status(500).json({ message: "Erreur serveur" });
 		}
 	},
-	
-	  
-	  
 
 	async update(req, res) {
 		try {
-			const { oldSlug, image, title, slug, github, description, techno } =
-				req.body;
+			const {
+				oldSlug,
+				image,
+				title,
+				slug,
+				github,
+				description,
+				date,
+				conception,
+				front,
+				back,
+				fullstack,
+				bdd,
+			} = req.body;
 
 			// Vérifie si le projet existe avec l'ancien slug
 			const project = await Project.findOne({ where: { slug: oldSlug } });
@@ -89,17 +128,21 @@ const projectControllers = {
 				return res.status(404).json({ message: "Projet non trouvé" });
 			}
 
-			// Met à jour le projet avec les nouvelles données
 			await project.update({
 				image,
 				title,
-				slug, // Mettre à jour le slug
+				slug,
 				github,
 				description,
-				techno,
+				date,
+				conception: JSON.parse(conception),
+				front: JSON.parse(front),
+				back: JSON.parse(back),
+				fullstack: JSON.parse(fullstack),
+				bdd: JSON.parse(bdd),
 			});
 
-			res.status(200).json(project);
+			res.status(200).json(project); // Retourne le projet mis à jour
 		} catch (error) {
 			console.error("Erreur lors de la mise à jour :", error);
 			res.status(500).json({ message: "Erreur serveur" });

@@ -17,6 +17,10 @@ Project.init(
 			type: DataTypes.TEXT,
 			allowNull: true,
 		},
+		date: {
+			type: DataTypes.DATE,
+			allowNull: true,
+		},
 		slug: {
 			type: DataTypes.STRING,
 			allowNull: false,
@@ -27,14 +31,46 @@ Project.init(
 			allowNull: true,
 			unique: true,
 		},
-		techno: {
-			type: DataTypes.JSON,
+		conception: {
+			type: DataTypes.JSONB,
 			allowNull: false,
+			defaultValue: [],
+		},
+		front: {
+			type: DataTypes.JSONB,
+			allowNull: false,
+			defaultValue: [],
+		},
+		back: {
+			type: DataTypes.JSONB,
+			allowNull: false,
+			defaultValue: [],
+		},
+		fullstack: {
+			type: DataTypes.JSONB,
+			allowNull: false,
+			defaultValue: [],
+		},
+		bdd: {
+			type: DataTypes.JSONB,
+			allowNull: false,
+			defaultValue: [],
+		},
+		created_at: {
+			type: DataTypes.DATE,
+			allowNull: false,
+			defaultValue: DataTypes.NOW,
+		},
+		updated_at: {
+			type: DataTypes.DATE,
+			allowNull: false,
+			defaultValue: DataTypes.NOW,
 		},
 	},
 	{
 		sequelize: sequelize,
 		tableName: "project",
+		timestamps: false, // Si tu veux gérer les timestamps manuellement
 	},
 );
 
