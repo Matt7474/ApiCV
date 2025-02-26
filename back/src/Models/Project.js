@@ -25,6 +25,7 @@ Project.init(
 		github: {
 			type: DataTypes.TEXT,
 			allowNull: true,
+			unique: true,
 		},
 		techno: {
 			type: DataTypes.JSON,
