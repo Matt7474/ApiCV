@@ -107,19 +107,27 @@ const projectControllers = {
 	async update(req, res) {
 		try {
 			const {
-				oldSlug,
-				image,
 				title,
+				description,
 				slug,
 				github,
-				description,
+
 				date,
-				conception,
-				front,
-				back,
-				fullstack,
-				bdd,
+				technoConception,
+				technoFront,
+				technoBack,
+				technoFullstack,
+				technoBDD,
+				oldSlug,
 			} = req.body;
+
+			console.log("Données reçues :", {
+				technoConception,
+				technoFront,
+				technoBack,
+				technoFullstack,
+				technoBDD,
+			});
 
 			// Vérifie si le projet existe avec l'ancien slug
 			const project = await Project.findOne({ where: { slug: oldSlug } });
@@ -129,17 +137,16 @@ const projectControllers = {
 			}
 
 			await project.update({
-				image,
 				title,
 				slug,
 				github,
 				description,
 				date,
-				conception: JSON.parse(conception),
-				front: JSON.parse(front),
-				back: JSON.parse(back),
-				fullstack: JSON.parse(fullstack),
-				bdd: JSON.parse(bdd),
+				technoConception,
+				technoFront,
+				technoBack,
+				technoFullstack,
+				technoBDD,
 			});
 
 			res.status(200).json(project); // Retourne le projet mis à jour

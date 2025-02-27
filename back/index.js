@@ -7,7 +7,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./src/config/swaggerConfig.js";
 
 const app = express();
-// Cors
+cors;
 app.use(
 	cors({
 		origin: [
@@ -45,6 +45,6 @@ const port = process.env.PORT;
 app.listen(process.env.PORT, () => {
 	console.log(`Listening on ${process.env.BASE_URL}:${port}`);
 	console.log(
-		`📄 Documentation Swagger disponible sur http://localhost:${port}/api-docs`,
+		`📄 Documentation Swagger disponible sur http://${process.env.BASE_URL}:${port}/api-docs`,
 	);
 });
