@@ -1,6 +1,10 @@
 import { Project } from "../Models/Project.js";
 
 const projectControllers = {
+	test(req, res) {
+		res.send("route test ok !");
+	},
+
 	async index(req, res) {
 		try {
 			const projects = await Project.findAll();
@@ -13,7 +17,9 @@ const projectControllers = {
 			res.status(200).json(projectsJSON);
 		} catch (error) {
 			console.error("Erreur lors de la connexion :", error);
-			res.status(500).json({ message: "Erreur serveur" });
+			res
+				.status(500)
+				.json({ message: "Erreur serveur a mainController.index" });
 		}
 	},
 	async show(req, res) {

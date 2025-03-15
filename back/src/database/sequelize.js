@@ -1,19 +1,29 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
 
-const sequelize = new Sequelize(process.env.PG_URL, {
-    dialect: 'postgres',
-    define: {
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-        underscored: true,
-    },
+dotenv.config();
 
-    dialectOptions: {
-        // cette option permet d'exécuter plusieurs instructions sql en un fois
-        multipleStatements: true,
-    },
-    // logging false pour pas polluer la console (décommenter si besoin)
-    // logging: false,
-});
+// const sequelizeClient = new Sequelize(process.env.PG_URL, {
+const sequelizeClient = new Sequelize(
+	process.env.DB_NAME,
+	process.env.DB_USER,
+	process.env.DB_PASSWORD,
+	{
+		host: process.env.DB_HOST || "127.0.0.1",
+		dialect: "postgres",
+		// dialectOptions: {
+		// 	ssl: {
+		// 		require: false, // Obligatoire pour activer SSL
+		// 		rejectUnauthorized: false, // Ajusté pour Render si le certificat est auto-signé
+		// 	},
+		// },
+		logging: false, // Optionnel : désactiver les logs SQL
+		define: {
+			createdAt: "created_at",
+			updatedAt: "updated_at",
+			underscored: true, // Utilise snake_case pour les colonnes
+		},
+	},
+);
 
-export { sequelize };
+export { sequelizeClient };

@@ -8,7 +8,7 @@ const router = Router();
 const upload = multer({ dest: "uploads/" });
 
 router.use("/uploads", express.static("uploads"));
-
+router.get("/", catchErrors(projectControllers.test));
 router.get("/projects", catchErrors(projectControllers.index));
 router.get("/projects/:slug", catchErrors(projectControllers.show));
 router.post(
