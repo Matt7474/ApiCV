@@ -7,7 +7,7 @@
 		"create:db": "PGPASSWORD=apicvmdp123aze psql -U havu2232_api_cv_user -d havu2232_api_cv < data/data.sql",
 		"seed:db": "PGPASSWORD=apicvmdp123aze psql -U havu2232_api_cv_user -d havu2232_api_cv < data/seed.sql",
 		"reset:db": "npm run create:db && npm run seed:db",
-		"dev": "nodemon index.js",
+		"dev": "ENV_FILE=.env.dev nodemon index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],

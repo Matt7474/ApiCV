@@ -1,69 +1,22 @@
-// import "dotenv/config";
-// import express from "express";
-// import cors from "cors";
-// import { router } from "./src/router/index.js";
-// import { errorHandler, notFound } from "./src/middlewares/errorHandlers.js";
-// import swaggerUi from "swagger-ui-express";
-// import swaggerSpec from "./src/config/swaggerConfig.js";
-
-// import db from "./db.js";
-
-// const app = express();
-
-// // Test de la connexion à la base de données
-// db.pool
-// 	.connect()
-// 	.then(() => {
-// 		console.log("Connecté à la base de données PostgreSQL");
-// 	})
-// 	.catch((err) => {
-// 		console.error("Erreur de connexion à la base de données", err);
-// 		process.exit(1); // Arrêt du serveur en cas d'échec de la connexion
-// 	});
-
-// // Configuration CORS
-// app.use(
-// 	cors({
-// 		origin: [
-// 			"http://localhost:5173", // Frontend React local
-// 			"http://127.0.0.1:5173", // Frontend React local
-// 		],
-// 	}),
-// );
-
-// app.use(express.static(import.meta.dirname));
-// app.use("/uploads", express.static("uploads"));
-
-// app.use(express.urlencoded({ extended: false }));
-
-// // Documentation Swagger
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-// app.use(express.json());
-// app.use("/api", router);
-
-// app.use(notFound);
-// app.use(errorHandler);
-
-// const port = process.env.PORT;
-
-// // app.listen(3000, "0.0.0.0", () => {
-// // 	console.log("Server running on port 3000");
-// // });
-
-// app.listen(port, () => {
-// 	console.log(`Listening on ${process.env.BASE_URL}:${port}`);
-// 	console.log(
-// 		`📄 Documentation Swagger disponible sur http://${process.env.BASE_URL}:${port}/api-docs`,
-// 	);
-// });
-
 import "dotenv/config";
 import express from "express";
+
 import pkg from "pg";
 import { router } from "./src/router/index.js";
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+
+import jwt from "jsonwebtoken";
 
 const { Pool } = pkg;
 const app = express();
+app.use(express.json());
+
 // Configuration de la base de données
 const pool = new Pool({
 	user: process.env.DB_USER,
@@ -73,24 +26,60 @@ const pool = new Pool({
 	port: process.env.DB_PORT,
 });
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Configuration de Swagger
+const swaggerOptions = {
+	definition: {
+		openapi: "3.0.0",
+		info: {
+			title: "API CV",
+			version: "1.0.0",
+			description: "Documentation de l'API CV",
+		},
+		servers: [
+			{
+				url: "https://apicv.matt-dev.fr/api", // Change selon ton environnement
+				description: "Serveur API",
+			},
+		],
+	},
+	apis: [path.join(__dirname, "src/router/*.js")],
+};
+
+// configuration Cors
 app.use(
 	cors({
-		origin: [
-			"http://88.178.106.19",
-			"http://localhost:5173",
-			"http://127.0.0.1:5173",
-		],
+		origin: "*",
+		methods: ["GET", "POST", "PATCH", "DELETE"],
 	}),
 );
 
+// Authorisation de Post/Patch/Delete par le token
+app.use((req, res, next) => {
+	const token = process.env.API_KEY;
+	if (["POST", "PATCH", "DELETE"].includes(req.method)) {
+		const clientKey = req.get("X-API-KEY");
+		if (clientKey !== token) {
+			return res.status(403).json({ message: "Forbidden" });
+		}
+	}
+	next();
+});
+
+// Connexion à PostgreSQL
 (async () => {
 	try {
-		await sequelizeClient.authenticate();
+		await sequelize.authenticate();
 		console.log("Connexion à la base de données réussie!");
 	} catch (error) {
 		console.error("Erreur de connexion à la base de données :", error);
 	}
 })();
+
+// Serve static files from the 'uploads' folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Test de connexion à la base de données
 pool
@@ -100,22 +89,16 @@ pool
 		console.error("🔴 Erreur de connexion à la base de données", err),
 	);
 
-// Route simple pour tester l'API
-// app.get("/", (req, res) => {
-// 	res.send("Bienvenue sur mon API !");
-// });
 app.use("/api", router);
 
-// Lancer le serveur
-// app.listen(port, () => {
-// 	console.log(`🚀 Serveur lancé sur http://localhost:${port}`);
-// });
+// Doc Swagger
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const port = process.env.PORT || 3000;
 const baseUrl = process.env.BASE_URL || "http://localhost";
-// app.listen(port, () => {
-//     console.log(`Listening on ${baseUrl}:${port}`);
-// });
+
 app.listen(3000, "0.0.0.0", () => {
 	console.log("Serveur en écoute sur le port 3000");
+	console.log("Swagger disponible sur https://apicv.matt-dev.fr/api-docs");
 });

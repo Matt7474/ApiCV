@@ -31,6 +31,11 @@ Project.init(
 			allowNull: true,
 			unique: true,
 		},
+		site: {
+			type: DataTypes.TEXT,
+			allowNull: true,
+			unique: true,
+		},
 		conception: {
 			type: DataTypes.JSONB,
 			allowNull: false,
@@ -70,7 +75,7 @@ Project.init(
 	{
 		sequelize: sequelize,
 		tableName: "project",
-		timestamps: false, // Si tu veux gérer les timestamps manuellement
+		timestamps: false,
 	},
 );
 
